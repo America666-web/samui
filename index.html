@@ -4,16 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SiteMarket — готовые сайты под ключ</title>
-<link rel="icon" href="logo.png">
+<link rel="icon" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body class="page">
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="index.html" class="brand"><img src="logo.png" alt="SiteMarket"> Site<span class="dot">Market</span></a>
+    <a href="index.html" class="brand">
+      <img id="sm-logo-img" src="assets/logo.png" alt="SiteMarket">
+      Site<span class="dot">Market</span>
+    </a>
     <nav class="nav" id="sm-nav"></nav>
   </div>
 </header>
@@ -36,7 +39,7 @@
           <div class="stat"><b>6</b><span>категорий</span></div>
         </div>
       </div>
-      <img class="hero-banner" src="banner.png" alt="Витрина сайтов">
+      <img id="sm-banner-img" class="hero-banner" src="assets/banner.png" alt="Витрина сайтов">
     </div>
   </section>
 
@@ -121,21 +124,85 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="storage.js"></script>
-<script src="firebase-sync.js"></script>
-<script src="auth.js"></script>
-<script src="upload.js"></script>
-<script src="sitecrypt.js"></script>
-<script src="zipviewer.js"></script>
-<script src="app.js"></script>
-<script src="particles.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/firebase-sync.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/upload.js"></script>
+<script src="js/sitecrypt.js"></script>
+<script src="js/zipviewer.js"></script>
+<script src="js/app.js"></script>
+<script src="js/particles.js"></script>
+
+<script>
+  (function() {
+    // Ключ для хранения в localStorage
+    const CACHE_KEY = 'sm_branding_cache';
+
+    // Функция применения полученных/сохранённых данных
+    function applyBranding(data) {
+      const logoImg = document.getElementById('sm-logo-img');
+      const bannerImg = document.getElementById('sm-banner-img');
+      if (logoImg && data.logoUrl) logoImg.src = data.logoUrl;
+      if (bannerImg && data.bannerUrl) bannerImg.src = data.bannerUrl;
+    }
+
+    // Проверяем кэш
+    let cached = null;
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) cached = JSON.parse(raw);
+    } catch (_) {}
+
+    if (cached && cached.logoUrl && cached.bannerUrl) {
+      // Если есть кэш – применяем сразу (без запроса)
+      applyBranding(cached);
+    } else {
+      // Кэша нет – запрашиваем API (имитация)
+      // Вместо реального API используем fallback‑значения (текущие файлы),
+      // но сохраняем их в localStorage, чтобы при следующем заходе использовать уже их.
+      // Если нужен реальный эндпоинт – замените URL и обработайте ответ.
+      const DEFAULT_LOGO = 'assets/logo.png';
+      const DEFAULT_BANNER = 'assets/banner.png';
+
+      // Пытаемся получить данные с API (можно заменить на реальный fetch)
+      // В демо-целях просто используем дефолтные значения, но сохраняем их в кэш,
+      // чтобы при повторных загрузках не делать лишних запросов.
+      // Если у вас есть реальный API, раскомментируйте fetch и обработайте ответ.
+      /*
+      fetch('https://api.sitemarket.com/branding')
+        .then(res => res.json())
+        .then(data => {
+          const result = {
+            logoUrl: data.logo || DEFAULT_LOGO,
+            bannerUrl: data.banner || DEFAULT_BANNER
+          };
+          localStorage.setItem(CACHE_KEY, JSON.stringify(result));
+          applyBranding(result);
+        })
+        .catch(() => {
+          // При ошибке – используем fallback и кэшируем их
+          const fallback = { logoUrl: DEFAULT_LOGO, bannerUrl: DEFAULT_BANNER };
+          localStorage.setItem(CACHE_KEY, JSON.stringify(fallback));
+          applyBranding(fallback);
+        });
+      */
+
+      // Для демонстрации – сразу кэшируем дефолтные значения
+      const fallback = { logoUrl: DEFAULT_LOGO, bannerUrl: DEFAULT_BANNER };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(fallback));
+      applyBranding(fallback);
+    }
+  })();
+</script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     smRenderNav('home');
     document.getElementById('stat-count').textContent = smGetPublicListings().length;
   });
 </script>
+
 <!-- Частицы (фон с искрами) -->
 <script>
 (function() {
