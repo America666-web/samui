@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вход — SiteMarket</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand"><img src="logo.png" alt="SiteMarket"> Site<span class="dot">Market</span></a>
+    <nav class="nav" id="sm-nav"></nav>
+  </div>
+</header>
+
+<main class="main auth-wrap">
+  <div class="auth-card">
+    <h1>С возвращением</h1>
+    <p class="auth-sub">Войдите, чтобы покупать сайты и видеть свой профиль</p>
+
+    <div id="sm-msg" class="form-msg error"></div>
+
+    <form id="sm-login-form">
+      <div class="field">
+        <label for="f-login">Email или логин</label>
+        <input id="f-login" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="f-pass">Пароль</label>
+        <input id="f-pass" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Войти</button>
+    </form>
+
+    <p class="auth-foot">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 <span class="orange">SiteMarket</span></span>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="storage.js"></script>
+<script src="firebase-sync.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script src="particles.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    smRenderNav('login');
+
+    document.getElementById('sm-login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const login = document.getElementById('f-login').value;
+      const pass = document.getElementById('f-pass').value;
+      const res = smLogin(login, pass);
+      const msg = document.getElementById('sm-msg');
+
+      if (!res.ok) {
+        msg.textContent = res.error;
+        msg.className = 'form-msg error show';
+        return;
+      }
+
+      window.location.href = res.role === 'admin' || res.role === 'owner' ? 'admin.html' : 'profile.html';
+    });
+  });
+</script>
+ (function() 
+  var canvas = document.createElement('canvas');
+  canvas.id = 'particles-canvas';
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '0';
+  document.body.prepend(canvas);
+
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var numParticles = 150;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: Math.random() * 3 + 1.5,
+      speedY: Math.random() * 1.5 + 0.5,
+      opacity: Math.random() * 0.5 + 0.4,
+      color: ['rgba(255, 106, 26,', 'rgba(255, 200, 50,', 'rgba(255, 150, 0,'][Math.floor(Math.random() * 3)]
+    };
+  }
+
+  for (var i = 0; i < numParticles; i++) {
+    particles.push(createParticle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.y += p.speedY;
+      if (p.y > canvas.height + 20) {
+        p.y = -20;
+        p.x = Math.random() * canvas.width;
+        p.size = Math.random() * 3 + 1.5;
+        p.speedY = Math.random() * 1.5 + 0.5;
+        p.opacity = Math.random() * 0.5 + 0.4;
+        p.color = ['rgba(255, 106, 26,', 'rgba(255, 200, 50,', 'rgba(255, 150, 0,'][Math.floor(Math.random() * 3)];
+      }
+      // Свечение
+      ctx.shadowColor = 'rgba(255, 106, 26, 0.6)';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.opacity + ')';
+      ctx.fill();
+      // Яркое ядро
+      ctx.shadowBlur = 35;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 0.3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fill();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
